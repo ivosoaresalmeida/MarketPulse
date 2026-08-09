@@ -42,9 +42,9 @@ public class PortfolioService {
             Instant.now()
         );
 
-        Portfolio savedPortfolio = portfolioRepository.save(portfolio);
+        Portfolio newPortfolio = portfolioRepository.save(portfolio);
 
-        return toResponse(savedPortfolio);
+        return toResponse(newPortfolio);
     }
 
     public PortfolioResponse updatePortfolio(
