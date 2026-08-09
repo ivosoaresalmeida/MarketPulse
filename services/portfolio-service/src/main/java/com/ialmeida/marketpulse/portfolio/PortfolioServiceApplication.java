@@ -1,13 +1,13 @@
-package com.ialmeida.marketpulse;
+package com.ialmeida.marketpulse.portfolio;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MarketpulseApplication {
+public class PortfolioServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MarketpulseApplication.class, args);
+        SpringApplication.run(PortfolioServiceApplication.class, args);
     }
 
 }
