@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-service
+              uri: ${marketpulse.services.user-service-url}
+              predicates:
+                - Path=/users/**
+            - id: portfolio-service
+              uri: ${marketpulse.services.portfolio-service-url}
+              predicates:
+                - Path=/portfolios/**
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+marketpulse:
+  services:
+    user-service-url: http://localhost:8082
+    portfolio-service-url: http://localhost:8081

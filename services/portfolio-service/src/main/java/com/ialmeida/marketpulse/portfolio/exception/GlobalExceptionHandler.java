@@ -51,4 +51,20 @@ public class GlobalExceptionHandler {
             Instant.now()
         );
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrorResponse handleUserNotFound(
+        UserNotFoundException exception,
+        HttpServletRequest request
+    ) {
+
+        return new ApiErrorResponse(
+            HttpStatus.NOT_FOUND.value(),
+            exception.getMessage(),
+            List.of(),
+            request.getRequestURI(),
+            Instant.now()
+        );
+    }
 }

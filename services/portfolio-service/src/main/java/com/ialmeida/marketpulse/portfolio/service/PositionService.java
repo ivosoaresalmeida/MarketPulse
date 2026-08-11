@@ -125,7 +125,9 @@ public class PositionService {
                 position.getSymbol(),
                 position.getQuantity().toString(),
                 position.getAverageCost().toString(),
-                position.getCurrency()
+                position.getCurrency(),
+                position.getCreatedAt(),
+                position.getUpdatedAt()
         );
     }
 }

@@ -47,9 +47,9 @@ class PositionServiceTest {
         when(request.getCurrency()).thenReturn("USD");
 
         Portfolio portfolio = new Portfolio(
+            1L,
             "My ETF Portfolio",
-            "USD",
-            java.time.Instant.now()
+            "USD"
         );
 
         when(portfolioRepository.findById(1L)).thenReturn(Optional.of(portfolio));
@@ -78,9 +78,9 @@ class PositionServiceTest {
     @Test
     void shouldReturnPositionsForPortfolio() {
         Portfolio portfolio = new Portfolio(
+            1L,
             "My ETF Portfolio",
-            "USD",
-            java.time.Instant.now()
+            "USD"
         );
 
         when(portfolioRepository.existsById(1L)).thenReturn(true);
@@ -107,9 +107,9 @@ class PositionServiceTest {
     @Test
     void shouldReturnPositionById() {
         Portfolio portfolio = new Portfolio(
+            1L,
             "My ETF Portfolio",
-            "USD",
-            java.time.Instant.now()
+            "USD"
         );
 
         when(portfolioRepository.existsById(1L)).thenReturn(true);
@@ -142,9 +142,9 @@ class PositionServiceTest {
         when(request.getCurrency()).thenReturn("USD");
 
         Portfolio portfolio = new Portfolio(
+            1L,
             "My ETF Portfolio",
-            "USD",
-            java.time.Instant.now()
+            "USD"
         );
 
         Position position = new Position(
@@ -174,9 +174,9 @@ class PositionServiceTest {
     @Test
     void shouldDeletePosition() {
         Portfolio portfolio = new Portfolio(
+            1L,
             "My ETF Portfolio",
-            "USD",
-            java.time.Instant.now()
+            "USD"
         );
 
         Position position = new Position(

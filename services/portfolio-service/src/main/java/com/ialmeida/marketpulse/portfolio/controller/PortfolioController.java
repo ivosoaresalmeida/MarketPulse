@@ -5,7 +5,6 @@ import java.util.List;
 import com.ialmeida.marketpulse.portfolio.dto.CreatePortfolioRequest;
 import com.ialmeida.marketpulse.portfolio.dto.PortfolioResponse;
 import com.ialmeida.marketpulse.portfolio.dto.UpdatePortfolioRequest;
-import com.ialmeida.marketpulse.portfolio.model.Portfolio;
 import com.ialmeida.marketpulse.portfolio.service.PortfolioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,12 +29,18 @@ public class PortfolioController {
     }
 
     @GetMapping("/portfolios")
-    public List<PortfolioResponse> getPortfolios() {
+    public List<PortfolioResponse> getPortfolios(
+        @RequestParam(required = false) Long userId
+    ) {
+        if (userId != null) {
+            return portfolioService.getPortfoliosByUserId(userId);
+        }
+
         return portfolioService.getPortfolios();
     }
 
     @GetMapping("/portfolios/{id}")
-    public PortfolioResponse getPortfolios(@PathVariable Long id) {
+    public PortfolioResponse getPortfolio(@PathVariable Long id) {
         return portfolioService.getPortfolio(id);
     }
 

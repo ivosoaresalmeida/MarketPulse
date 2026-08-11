@@ -1,6 +1,9 @@
 spring:
+  application:
+    name: portfolio-service
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/marketpulse
+    url: jdbc:postgresql://localhost:5432/marketpulse_portfolio
     username: postgres
     password: postgres
 
@@ -11,3 +14,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+server:
+  port: 8081
+
+user-service:
+  url: http://localhost:8082

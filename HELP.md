@@ -1,5 +1,24 @@
 # Getting Started
 
+## Local Development
+
+Start infrastructure:
+
+```bash
+podman-compose up -d
+```
+
+Start all Spring Boot services:
+
+```bash
+./run-all.sh
+```
+
+Stop services:
+
+- Press `Ctrl+C` in the terminal where `run-all.sh` is running.
+- This stops only the Spring Boot services, not the PostgreSQL containers.
+
 ### Reference Documentation
 
 For further reference, please consider the following sections:
@@ -25,4 +44,3 @@ The following guides illustrate how to use some features concretely:
 Due to Maven's design, elements are inherited from the parent POM to the project POM. While most of the inheritance is fine, it also
 inherits unwanted elements like `<license>` and `<developers>` from the parent. To prevent this, the project POM contains empty overrides
 for these elements. If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
-

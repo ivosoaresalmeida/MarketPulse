@@ -1,10 +1,14 @@
 package com.ialmeida.marketpulse.portfolio.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class CreatePortfolioRequest {
+
+    @NotNull(message = "User ID is required.")
+    private Long userId;
 
     @NotBlank(message = "Portfolio name is required.")
     @Size(
@@ -19,6 +23,10 @@ public class CreatePortfolioRequest {
         message = "Base currency must be a 3-letter uppercase currency code."
     )
     private String baseCurrency;
+
+    public Long getUserId() {
+        return userId;
+    }
 
     public String getName() {
         return name;

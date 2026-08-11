@@ -1,10 +1,12 @@
 package com.ialmeida.marketpulse.portfolio.controller;
 
+import com.ialmeida.marketpulse.portfolio.client.UserClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.when;
 
 @Testcontainers
 @SpringBootTest
@@ -34,6 +37,9 @@ class PositionControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockitoBean
+    private UserClient userClient;
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
@@ -43,11 +49,14 @@ class PositionControllerIntegrationTest {
 
     @Test
     void shouldCreateAndRetrievePosition() throws Exception {
+        when(userClient.existsById(1L)).thenReturn(true);
+
         String portfolioResponse = mockMvc.perform(
                 post("/portfolios")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""
                         {
+                            "userId": 1,
                             "name": "Integration Portfolio",
                             "baseCurrency": "USD"
                         }
@@ -103,11 +112,14 @@ class PositionControllerIntegrationTest {
 
     @Test
     void shouldUpdateAndDeletePosition() throws Exception {
+        when(userClient.existsById(1L)).thenReturn(true);
+
         String portfolioResponse = mockMvc.perform(
                 post("/portfolios")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""
                         {
+                            "userId": 1,
                             "name": "Integration Portfolio",
                             "baseCurrency": "USD"
                         }

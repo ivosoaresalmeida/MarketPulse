@@ -21,10 +21,13 @@ public class Portfolio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long userId;
+
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(name = "base_currency", nullable = false, length = 3)
+    @Column(nullable = false, length = 3)
     private String baseCurrency;
 
     @OneToMany(
@@ -34,29 +37,42 @@ public class Portfolio {
     )
     private List<Position> positions = new ArrayList<>();
 
-    @Column(name = "created_at", nullable = false)
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
+
+    @Column(nullable = false)
+    private Instant updatedAt;
 
     protected Portfolio() {
     }
 
     public Portfolio(
+        Long userId,
         String name,
-        String baseCurrency,
-        Instant createdAt) {
-
+        String baseCurrency
+    ) {
+        this.userId = userId;
         this.name = name;
         this.baseCurrency = baseCurrency;
-        this.createdAt = createdAt;
+        this.createdAt = Instant.now();
+        this.updatedAt = this.createdAt;
     }
 
-    public void update(String name, String baseCurrency) {
+    public void update(
+        String name,
+        String baseCurrency
+    ) {
         this.name = name;
         this.baseCurrency = baseCurrency;
+        this.updatedAt = Instant.now();
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     public String getName() {
@@ -67,7 +83,15 @@ public class Portfolio {
         return baseCurrency;
     }
 
+    public List<Position> getPositions() {
+        return positions;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
     }
 }
