@@ -5,6 +5,7 @@ import com.ialmeida.marketpulse.portfolio.dto.PositionResponse;
 import com.ialmeida.marketpulse.portfolio.dto.UpdatePositionRequest;
 import com.ialmeida.marketpulse.portfolio.service.PositionService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,8 @@ public class PositionController {
         this.positionService = positionService;
     }
 
-    @PostMapping
+        @PostMapping
+        @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<PositionResponse> createPosition(
             @PathVariable Long portfolioId,
             @Valid @RequestBody CreatePositionRequest request
@@ -29,7 +31,7 @@ public class PositionController {
         PositionResponse response =
                 positionService.createPosition(portfolioId, request);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping

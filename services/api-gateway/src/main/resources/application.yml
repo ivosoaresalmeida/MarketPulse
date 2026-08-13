@@ -26,5 +26,5 @@ management:
 
 marketpulse:
   services:
-    user-service-url: http://localhost:8082
-    portfolio-service-url: http://localhost:8081
+    user-service-url: ${USER_SERVICE_URL:http://localhost:8082}
+    portfolio-service-url: ${PORTFOLIO_SERVICE_URL:http://localhost:8081}

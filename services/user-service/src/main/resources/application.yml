@@ -3,14 +3,14 @@ spring:
     name: user-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/marketpulse_user
-    username: postgres
-    password: postgres
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/marketpulse}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
 
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: ${JPA_SHOW_SQL:false}
 
 server:
   port: 8082

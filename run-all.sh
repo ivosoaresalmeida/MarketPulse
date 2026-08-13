@@ -7,8 +7,7 @@ MVNW="$ROOT_DIR/mvnw"
 COMPOSE_FILE="$ROOT_DIR/compose.yml"
 
 DB_CONTAINERS=(
-  "marketpulse-portfolio-postgres"
-  "marketpulse-user-postgres"
+  "marketpulse-postgres"
 )
 
 SERVICE_LABELS=(
@@ -45,6 +44,11 @@ is_container_running() {
   podman ps --filter "name=^${name}$" --format '{{.Names}}' | grep -Fxq "$name"
 }
 
+is_container_existing() {
+  local name="$1"
+  podman container exists "$name"
+}
+
 ensure_compose_cmd() {
   if podman compose version >/dev/null 2>&1; then
     COMPOSE_CMD=(podman compose -f "$COMPOSE_FILE")
@@ -64,7 +68,14 @@ ensure_postgres_containers() {
   local name
 
   for name in "${DB_CONTAINERS[@]}"; do
-    if ! is_container_running "$name"; then
+    if is_container_running "$name"; then
+      continue
+    fi
+
+    if is_container_existing "$name"; then
+      log "Starting existing PostgreSQL container: ${name}"
+      podman start "$name" >/dev/null || return 1
+    else
       missing+=("$name")
     fi
   done
@@ -81,7 +92,7 @@ ensure_postgres_containers() {
     return 1
   fi
 
-  (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" up -d portfolio-postgres user-postgres) || return 1
+  (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" up -d postgres) || return 1
 
   for name in "${DB_CONTAINERS[@]}"; do
     if ! is_container_running "$name"; then

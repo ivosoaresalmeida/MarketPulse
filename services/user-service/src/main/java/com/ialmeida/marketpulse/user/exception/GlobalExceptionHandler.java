@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Locale;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,15 +41,13 @@ public class GlobalExceptionHandler {
             .body(response);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(
-        IllegalArgumentException exception,
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserNotFound(
+        UserNotFoundException exception,
         HttpServletRequest request
     ) {
-        HttpStatus status = resolveStatusForIllegalArgument(exception);
-
         ApiErrorResponse response = new ApiErrorResponse(
-            status.value(),
+            HttpStatus.NOT_FOUND.value(),
             exception.getMessage(),
             List.of(),
             request.getRequestURI(),
@@ -58,8 +55,24 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity
-            .status(status)
+            .status(HttpStatus.NOT_FOUND)
             .body(response);
+    }
+
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity<ApiErrorResponse> handleDuplicateUser(
+        DuplicateUserException exception,
+        HttpServletRequest request
+    ) {
+        ApiErrorResponse response = new ApiErrorResponse(
+            HttpStatus.CONFLICT.value(),
+            exception.getMessage(),
+            List.of(),
+            request.getRequestURI(),
+            Instant.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(Exception.class)
@@ -80,25 +93,4 @@ public class GlobalExceptionHandler {
             .body(response);
     }
 
-    private HttpStatus resolveStatusForIllegalArgument(
-        IllegalArgumentException exception
-    ) {
-        String message = exception.getMessage();
-
-        if (message == null) {
-            return HttpStatus.BAD_REQUEST;
-        }
-
-        String normalizedMessage = message.toLowerCase(Locale.ROOT);
-
-        if (normalizedMessage.contains("not found")) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        if (normalizedMessage.contains("already exists")) {
-            return HttpStatus.CONFLICT;
-        }
-
-        return HttpStatus.BAD_REQUEST;
-    }
 }

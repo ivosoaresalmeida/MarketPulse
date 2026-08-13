@@ -1,29 +1,16 @@
 services:
 
-  portfolio-postgres:
+  postgres:
     image: docker.io/library/postgres:16
-    container_name: marketpulse-portfolio-postgres
+    container_name: marketpulse-postgres
     environment:
-      POSTGRES_DB: marketpulse_portfolio
+      POSTGRES_DB: marketpulse
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
-      - portfolio-postgres-data:/var/lib/postgresql/data
-
-  user-postgres:
-    image: docker.io/library/postgres:16
-    container_name: marketpulse-user-postgres
-    environment:
-      POSTGRES_DB: marketpulse_user
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5433:5432"
-    volumes:
-      - user-postgres-data:/var/lib/postgresql/data
+      - marketpulse-postgres-data:/var/lib/postgresql/data
 
 volumes:
-  portfolio-postgres-data:
-  user-postgres-data:
+  marketpulse-postgres-data:

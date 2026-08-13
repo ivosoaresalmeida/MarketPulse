@@ -3,9 +3,13 @@ package com.ialmeida.marketpulse.user.service;
 import com.ialmeida.marketpulse.user.dto.CreateUserRequest;
 import com.ialmeida.marketpulse.user.dto.UpdateUserRequest;
 import com.ialmeida.marketpulse.user.dto.UserResponse;
+import com.ialmeida.marketpulse.user.exception.DuplicateUserException;
+import com.ialmeida.marketpulse.user.exception.UserNotFoundException;
 import com.ialmeida.marketpulse.user.model.User;
 import com.ialmeida.marketpulse.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,23 +17,28 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder
+    ) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public UserResponse createUser(CreateUserRequest request) {
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException(
-                "A user with this email already exists."
-            );
+        String email = normalizeEmail(request.getEmail());
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicateUserException(email);
         }
 
         User user = new User(
             request.getUsername(),
-            request.getEmail(),
-            request.getPassword()
+            email,
+            passwordEncoder.encode(request.getPassword())
         );
 
         User savedUser = userRepository.save(user);
@@ -37,6 +46,7 @@ public class UserService {
         return toResponse(savedUser);
     }
 
+    @Transactional(readOnly = true)
     public List<UserResponse> getUsers() {
 
         return userRepository.findAll()
@@ -45,18 +55,18 @@ public class UserService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getUser(Long id) {
 
         User user = userRepository.findById(id)
             .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "User with id " + id + " not found."
-                )
+                new UserNotFoundException(id)
             );
 
         return toResponse(user);
     }
 
+    @Transactional
     public UserResponse updateUser(
         Long id,
         UpdateUserRequest request
@@ -64,22 +74,19 @@ public class UserService {
 
         User user = userRepository.findById(id)
             .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "User with id " + id + " not found."
-                )
+                new UserNotFoundException(id)
             );
 
-        if (!user.getEmail().equals(request.getEmail())
-            && userRepository.existsByEmail(request.getEmail())) {
+        String email = normalizeEmail(request.getEmail());
+        if (!user.getEmail().equals(email)
+            && userRepository.existsByEmail(email)) {
 
-            throw new IllegalArgumentException(
-                "A user with this email already exists."
-            );
+            throw new DuplicateUserException(email);
         }
 
         user.update(
             request.getUsername(),
-            request.getEmail()
+            email
         );
 
         User updatedUser = userRepository.save(user);
@@ -87,13 +94,12 @@ public class UserService {
         return toResponse(updatedUser);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
 
         User user = userRepository.findById(id)
             .orElseThrow(() ->
-                new IllegalArgumentException(
-                    "User with id " + id + " not found."
-                )
+                new UserNotFoundException(id)
             );
 
         userRepository.delete(user);
@@ -108,5 +114,9 @@ public class UserService {
             user.getCreatedAt(),
             user.getUpdatedAt()
         );
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase(java.util.Locale.ROOT);
     }
 }

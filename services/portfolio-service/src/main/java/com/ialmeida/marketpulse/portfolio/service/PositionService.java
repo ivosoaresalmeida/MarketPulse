@@ -10,6 +10,7 @@ import com.ialmeida.marketpulse.portfolio.model.Portfolio;
 import com.ialmeida.marketpulse.portfolio.repository.PositionRepository;
 import com.ialmeida.marketpulse.portfolio.repository.PortfolioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,7 +28,8 @@ public class PositionService {
         this.portfolioRepository = portfolioRepository;
     }
 
-    public PositionResponse createPosition(
+        @Transactional
+        public PositionResponse createPosition(
             Long portfolioId,
             CreatePositionRequest request
     ) {
@@ -48,7 +50,8 @@ public class PositionService {
         return toResponse(savedPosition);
     }
 
-    public List<PositionResponse> getPositions(Long portfolioId) {
+        @Transactional(readOnly = true)
+        public List<PositionResponse> getPositions(Long portfolioId) {
 
         if (!portfolioRepository.existsById(portfolioId)) {
             throw new PortfolioNotFoundException(portfolioId);
@@ -61,7 +64,8 @@ public class PositionService {
                 .toList();
     }
 
-    public PositionResponse getPosition(
+        @Transactional(readOnly = true)
+        public PositionResponse getPosition(
             Long portfolioId,
             Long positionId
     ) {
@@ -77,7 +81,8 @@ public class PositionService {
         return toResponse(position);
     }
 
-    public PositionResponse updatePosition(
+        @Transactional
+        public PositionResponse updatePosition(
             Long portfolioId,
             Long positionId,
             UpdatePositionRequest request
@@ -102,7 +107,8 @@ public class PositionService {
         return toResponse(updatedPosition);
     }
 
-    public void deletePosition(
+        @Transactional
+        public void deletePosition(
             Long portfolioId,
             Long positionId
     ) {

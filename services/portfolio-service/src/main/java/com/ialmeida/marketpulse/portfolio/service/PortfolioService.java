@@ -10,6 +10,7 @@ import com.ialmeida.marketpulse.portfolio.mapper.PortfolioMapper;
 import com.ialmeida.marketpulse.portfolio.model.Portfolio;
 import com.ialmeida.marketpulse.portfolio.repository.PortfolioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class PortfolioService {
         this.userClient = userClient;
     }
 
+    @Transactional
     public PortfolioResponse createPortfolio(
         CreatePortfolioRequest request
     ) {
@@ -49,6 +51,7 @@ public class PortfolioService {
         return portfolioMapper.toResponse(savedPortfolio);
     }
 
+    @Transactional(readOnly = true)
     public List<PortfolioResponse> getPortfolios() {
 
         return portfolioRepository.findAll()
@@ -57,6 +60,7 @@ public class PortfolioService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<PortfolioResponse> getPortfoliosByUserId(Long userId) {
 
         return portfolioRepository.findByUserId(userId)
@@ -65,6 +69,7 @@ public class PortfolioService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public PortfolioResponse getPortfolio(Long id) {
 
         Portfolio portfolio = portfolioRepository.findById(id)
@@ -75,6 +80,7 @@ public class PortfolioService {
         return portfolioMapper.toResponse(portfolio);
     }
 
+    @Transactional
     public PortfolioResponse updatePortfolio(
         Long id,
         UpdatePortfolioRequest request
@@ -96,6 +102,7 @@ public class PortfolioService {
         return portfolioMapper.toResponse(updatedPortfolio);
     }
 
+    @Transactional
     public void deletePortfolio(Long id) {
 
         Portfolio portfolio = portfolioRepository.findById(id)
